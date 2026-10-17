@@ -38,15 +38,6 @@ RESET = '\033[0m'
 BOLD = '\033[1m'
 
 
-# Chromatic Aberration & Glitch Color Palette (BBS Retro Cyberpunk)
-R1 = '\033[38;5;196m'  # Neon Red (Left aberration fringe)
-R2 = '\033[38;5;203m'  # Salmon / Coral Red
-Y1 = '\033[38;5;220m'  # Warm Gold / Yellow (Core highlight)
-W1 = '\033[1;37m'      # High-intensity White (Core glyph body)
-C1 = '\033[38;5;51m'   # Electric Neon Cyan (Right aberration fringe)
-B1 = '\033[38;5;39m'   # Deep Neon Blue (Far right chromatic shift)
-
-
 def strip_ansi(s):
     return re.sub(r'\033\[[0-9;]*m', '', s)
 
@@ -57,118 +48,58 @@ def box_row(content, width=80):
     return f"{GREEN}│{RESET}{content}{' ' * pad}{GREEN}│{RESET}"
 
 
-def color_glyph(glyph_str):
-    out = []
-    length = len(glyph_str)
-    for idx, ch in enumerate(glyph_str):
-        if ch == ' ':
-            out.append(' ')
-            continue
-        if ch == '─':
-            out.append(f"{W1}{ch}{RESET}")
-            continue
-        ratio = idx / max(1, length - 1)
-        if ratio <= 0.18:
-            out.append(f"{R1}{ch}{RESET}")
-        elif ratio <= 0.36:
-            out.append(f"{Y1}{ch}{RESET}")
-        elif ratio <= 0.65:
-            out.append(f"{W1}{ch}{RESET}")
-        elif ratio <= 0.85:
-            out.append(f"{C1}{ch}{RESET}")
-        else:
-            out.append(f"{B1}{ch}{RESET}")
-    return "".join(out)
-
-
 def print_fomc_header(dataset_count=45):
     now_str = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-    # BBS Retro Chromatic Aberration Typography (XAU/USD) - Exact 82 characters width
-    cols = {
-        'X': [
-            "8888' `8888",
-            " `YY8888YY'",
-            "   ;8888:  ",
-            " .dd8''88b.",
-            "8888' `8888"
-        ],
-        'A': [
-            "`bbss..ssd'",
-            ":8888''8888",
-            "88888──8888",
-            "88888  8888",
-            "`YY88' `88Y"
-        ],
-        'U1': [
-            "8888' `888",
-            "8888   888",
-            "8888   888",
-            "`bbss..ssd",
-            " `YYssssY'"
-        ],
-        'SL': [
-            " .ss88",
-            ".ss88'",
-            "dd88' ",
-            ":8888:",
-            "88PP' "
-        ],
-        'U2': [
-            "8888' `888",
-            "8888   888",
-            "8888   888",
-            "`bbss..ssd",
-            " `YYssssY'"
-        ],
-        'S': [
-            "`bbss.8888'",
-            ":888888888 ",
-            "`*Y8888ss. ",
-            ";88888888' ",
-            ".,*Y8888888"
-        ],
-        'D': [
-            "88888`bbss.",
-            "88888 88888",
-            "88888 ,88PP",
-            "88888 `888b",
-            "88888 .,88*"
-        ]
-    }
+    # Large BBS Retro Typography (XAU) - Exact 82 characters width
+    col_X = [
+        r"88888'          `88888",
+        r" `8888b.      .d8888' ",
+        r"   `Y8888b..d8888P'   ",
+        r"     :8888888888:     ",
+        r"   .d8888P''Y8888b.   ",
+        r"88888'          `88888"
+    ]
 
-    divs = [
-        f"{R1}─{C1}─{RESET}",
-        "  ",
-        f"{W1}──{RESET}",
-        "  ",
-        f"{C1}─{R1}─{RESET}"
+    div1 = [
+        r"───────",
+        r"       ",
+        r"───────",
+        r"       ",
+        r"───────",
+        r"       "
+    ]
+
+    col_A = [
+        r"      `bbss..ssdd'      ",
+        r"     :888888888888:     ",
+        r"─── ,dd8''    ``88bb. ──",
+        r"    88888──────88888    ",
+        r"    88888      88888    ",
+        r"   `YY88'      `88YY'   "
+    ]
+
+    div2 = [
+        r"───────",
+        r"       ",
+        r"───────",
+        r"       ",
+        r"───────",
+        r"       "
+    ]
+
+    col_U = [
+        r"88888'          `88888",
+        r"88888            88888",
+        r"88888            88888",
+        r"88888            88888",
+        r"`bbss..        ..ssdd'",
+        r"  `YY8888ssss8888YY'  "
     ]
 
     banner_rows = []
-    for r in range(5):
-        c_parts = [
-            color_glyph(cols['X'][r]),
-            divs[r],
-            color_glyph(cols['A'][r]),
-            divs[r],
-            color_glyph(cols['U1'][r]),
-            divs[r],
-            color_glyph(cols['SL'][r]),
-            divs[r],
-            color_glyph(cols['U2'][r]),
-            divs[r],
-            color_glyph(cols['S'][r]),
-            divs[r],
-            color_glyph(cols['D'][r]),
-        ]
-        banner_rows.append("".join(c_parts))
-
-    subtext = (
-        f"        {R1}008211{RESET}"
-        f"                   {R1}\"{Y1}\"{W1}XAU{W1}/{C1}USD{C1}\"{B1}\"{RESET}"
-        f"                   {R1}ll{W1}bs{C1}s.{B1}999{RESET}"
-    )
+    for r in range(6):
+        banner_rows.append(col_X[r] + div1[r] + col_A[r] + div2[r] + col_U[r])
 
     row_cat  = f" {CYAN}CATALYST  {RESET}  FOMC PRESS CONFERENCE (THE FEDERAL RESERVE)"
     row_mod  = f" {CYAN}MODEL     {RESET}  N-GRAM TF-IDF & COSINE SIMILARITY NLP ENGINE"
@@ -179,10 +110,9 @@ def print_fomc_header(dataset_count=45):
 
     print("\n")
     for r in banner_rows:
-        print(r)
+        print(f"{GOLD}{r}{RESET}")
     print("")
-    print(subtext)
-    print("")
+    print(f"                           {YELLOW}[ X A U   S P O T   G O L D ]{RESET}\n")
 
     print(f"{GREEN}┌── FOMC Press Conference NLP Engine ────────────────────────────────────────────┐{RESET}")
     print(box_row(row_cat))
@@ -193,7 +123,7 @@ def print_fomc_header(dataset_count=45):
     print(box_row(row_th))
     print(box_row(row_time))
     print(f"{GREEN}└────────────────────────────────────────────────────────────────────────────────┘{RESET}")
-    print(f"{WHITE}Quantitative Macro NLP Forecaster Online.{RESET}  {RED}●{RESET} {GREEN}●{RESET} {YELLOW}●{RESET} {BLUE}●{RESET} {MAGENTA}●{RESET} {CYAN}●{RESET} {WHITE}●{RESET}\n")
+    print(f"{WHITE}Quantitative Macro NLP Forecaster Online.{RESET}  {GOLD}●{RESET} {GREEN}●{RESET} {CYAN}●{RESET}\n")
 
 
 def extract_chair_speech_from_pdf(pdf_path):
