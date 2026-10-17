@@ -42,7 +42,7 @@ def strip_ansi(s):
     return re.sub(r'\033\[[0-9;]*m', '', s)
 
 
-def box_row(content, width=58):
+def box_row(content, width=50):
     vis = len(strip_ansi(content))
     pad = max(0, width - vis)
     return f"{GREEN}│{RESET}{content}{' ' * pad}{GREEN}│{RESET}"
@@ -51,49 +51,75 @@ def box_row(content, width=58):
 def print_fomc_header(dataset_count=45):
     now_str = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-    # Sparkling Rhinestone Butterflies ASCII Art (34x13, Monochrome White & Silver-Gray)
-    butterfly_art = [
-        '                          \x1b[38;5;246m:\x1b[0m\x1b[38;5;252m*\x1b[0m\x1b[1;37m:\x1b[0m\x1b[1;37m*\x1b[0m    ',
-        '                         \x1b[38;5;252m*\x1b[0m\x1b[38;5;252m*\x1b[0m\x1b[1;37m*\x1b[0m\x1b[1;37m*\x1b[0m\x1b[1;37m:\x1b[0m\x1b[38;5;246m:\x1b[0m   ',
-        '                       \x1b[38;5;239m.\x1b[0m\x1b[38;5;252m*\x1b[0m\x1b[38;5;246m:\x1b[0m\x1b[38;5;246m:\x1b[0m\x1b[38;5;252m*\x1b[0m\x1b[38;5;246m:\x1b[0m\x1b[1;37m*\x1b[0m\x1b[1;37m:\x1b[0m\x1b[38;5;246m:\x1b[0m  ',
-        '            \x1b[38;5;239m.\x1b[0m\x1b[38;5;239m.\x1b[0m\x1b[38;5;239m.\x1b[0m \x1b[38;5;239m.\x1b[0m\x1b[38;5;239m.\x1b[0m\x1b[38;5;239m.\x1b[0m\x1b[38;5;239m.\x1b[0m  \x1b[38;5;239m.\x1b[0m\x1b[38;5;252m*\x1b[0m\x1b[38;5;252m*\x1b[0m\x1b[38;5;239m.\x1b[0m\x1b[38;5;252m*\x1b[0m\x1b[38;5;246m:\x1b[0m\x1b[38;5;246m:\x1b[0m\x1b[38;5;252m*\x1b[0m\x1b[1;37m*\x1b[0m\x1b[38;5;246m:\x1b[0m\x1b[38;5;246m:\x1b[0m\x1b[38;5;239m.\x1b[0m',
-        '         \x1b[38;5;239m.\x1b[0m\x1b[38;5;252m*\x1b[0m\x1b[1;37m*\x1b[0m\x1b[1;37m:\x1b[0m\x1b[1;37m*\x1b[0m\x1b[38;5;246m:\x1b[0m\x1b[38;5;252m*\x1b[0m\x1b[38;5;246m:\x1b[0m\x1b[38;5;246m:\x1b[0m\x1b[38;5;246m:\x1b[0m\x1b[38;5;246m:\x1b[0m\x1b[38;5;246m:\x1b[0m\x1b[38;5;252m*\x1b[0m\x1b[38;5;252m*\x1b[0m\x1b[1;37m*\x1b[0m\x1b[1;37m*\x1b[0m\x1b[1;37m*\x1b[0m\x1b[38;5;252m*\x1b[0m\x1b[38;5;252m*\x1b[0m\x1b[38;5;246m:\x1b[0m\x1b[38;5;252m*\x1b[0m\x1b[38;5;246m:\x1b[0m\x1b[38;5;252m*\x1b[0m\x1b[1;37m*\x1b[0m\x1b[1;37m*\x1b[0m',
-        '           \x1b[38;5;239m.\x1b[0m\x1b[38;5;246m:\x1b[0m\x1b[38;5;252m*\x1b[0m\x1b[38;5;252m*\x1b[0m\x1b[38;5;252m*\x1b[0m\x1b[38;5;252m*\x1b[0m\x1b[38;5;246m:\x1b[0m\x1b[38;5;252m*\x1b[0m\x1b[38;5;246m:\x1b[0m\x1b[38;5;246m:\x1b[0m\x1b[38;5;252m*\x1b[0m\x1b[38;5;252m*\x1b[0m\x1b[1;37m*\x1b[0m\x1b[1;37m:\x1b[0m\x1b[1;37m:\x1b[0m\x1b[1;37m*\x1b[0m\x1b[38;5;252m*\x1b[0m\x1b[38;5;252m*\x1b[0m\x1b[38;5;252m*\x1b[0m\x1b[38;5;252m*\x1b[0m\x1b[1;37m*\x1b[0m\x1b[38;5;252m*\x1b[0m\x1b[38;5;246m:\x1b[0m',
-        '              \x1b[38;5;239m.\x1b[0m\x1b[38;5;246m:\x1b[0m\x1b[38;5;252m*\x1b[0m\x1b[38;5;252m*\x1b[0m\x1b[1;37m*\x1b[0m\x1b[38;5;252m*\x1b[0m\x1b[38;5;252m*\x1b[0m\x1b[38;5;246m:\x1b[0m\x1b[1;37m*\x1b[0m\x1b[38;5;252m*\x1b[0m\x1b[38;5;252m*\x1b[0m\x1b[38;5;252m*\x1b[0m\x1b[38;5;239m.\x1b[0m \x1b[38;5;239m.\x1b[0m\x1b[38;5;239m.\x1b[0m\x1b[38;5;239m.\x1b[0m\x1b[38;5;239m.\x1b[0m  ',
-        '   \x1b[38;5;239m.\x1b[0m \x1b[38;5;239m.\x1b[0m\x1b[38;5;239m.\x1b[0m      \x1b[38;5;239m.\x1b[0m   \x1b[38;5;239m.\x1b[0m\x1b[38;5;252m*\x1b[0m\x1b[1;37m*\x1b[0m\x1b[1;37m*\x1b[0m\x1b[1;37m*\x1b[0m\x1b[38;5;252m*\x1b[0m\x1b[38;5;246m:\x1b[0m\x1b[38;5;252m*\x1b[0m\x1b[38;5;239m.\x1b[0m        ',
-        '\x1b[38;5;252m*\x1b[0m\x1b[38;5;252m*\x1b[0m\x1b[38;5;252m*\x1b[0m\x1b[38;5;252m*\x1b[0m\x1b[38;5;252m*\x1b[0m\x1b[38;5;252m*\x1b[0m\x1b[38;5;252m*\x1b[0m\x1b[38;5;239m.\x1b[0m\x1b[38;5;239m.\x1b[0m\x1b[38;5;246m:\x1b[0m\x1b[38;5;239m.\x1b[0m\x1b[38;5;239m.\x1b[0m\x1b[38;5;239m.\x1b[0m\x1b[38;5;252m*\x1b[0m\x1b[38;5;246m:\x1b[0m\x1b[38;5;239m.\x1b[0m\x1b[38;5;239m.\x1b[0m\x1b[38;5;239m.\x1b[0m \x1b[38;5;239m.\x1b[0m\x1b[38;5;239m.\x1b[0m\x1b[38;5;239m.\x1b[0m\x1b[38;5;239m.\x1b[0m           ',
-        '\x1b[38;5;239m.\x1b[0m\x1b[38;5;239m.\x1b[0m\x1b[38;5;246m:\x1b[0m\x1b[1;37m*\x1b[0m\x1b[1;37m:\x1b[0m\x1b[38;5;252m*\x1b[0m\x1b[38;5;252m*\x1b[0m\x1b[38;5;246m:\x1b[0m\x1b[38;5;252m*\x1b[0m\x1b[38;5;252m*\x1b[0m\x1b[38;5;246m:\x1b[0m\x1b[38;5;252m*\x1b[0m\x1b[1;37m*\x1b[0m\x1b[1;37m:\x1b[0m\x1b[1;37m:\x1b[0m\x1b[1;37m*\x1b[0m\x1b[38;5;252m*\x1b[0m\x1b[38;5;246m:\x1b[0m\x1b[38;5;239m.\x1b[0m\x1b[38;5;239m.\x1b[0m\x1b[38;5;239m.\x1b[0m\x1b[38;5;239m.\x1b[0m\x1b[38;5;239m.\x1b[0m\x1b[38;5;239m.\x1b[0m          ',
-        '   \x1b[38;5;239m.\x1b[0m\x1b[1;37m*\x1b[0m\x1b[1;37m:\x1b[0m\x1b[1;37m*\x1b[0m\x1b[38;5;252m*\x1b[0m\x1b[1;37m*\x1b[0m\x1b[38;5;252m*\x1b[0m\x1b[38;5;252m*\x1b[0m\x1b[38;5;252m*\x1b[0m\x1b[1;37m:\x1b[0m\x1b[1;37m:\x1b[0m\x1b[1;37m*\x1b[0m\x1b[1;37m*\x1b[0m\x1b[38;5;246m:\x1b[0m\x1b[38;5;252m*\x1b[0m\x1b[38;5;252m*\x1b[0m\x1b[38;5;252m*\x1b[0m\x1b[38;5;246m:\x1b[0m\x1b[38;5;252m*\x1b[0m\x1b[38;5;252m*\x1b[0m\x1b[38;5;252m*\x1b[0m\x1b[38;5;252m*\x1b[0m\x1b[38;5;252m*\x1b[0m\x1b[38;5;246m:\x1b[0m\x1b[38;5;239m.\x1b[0m      ',
-        '    \x1b[38;5;239m.\x1b[0m\x1b[38;5;252m*\x1b[0m\x1b[1;37m*\x1b[0m\x1b[1;37m*\x1b[0m\x1b[1;37m*\x1b[0m\x1b[38;5;252m*\x1b[0m\x1b[38;5;252m*\x1b[0m\x1b[38;5;252m*\x1b[0m\x1b[1;37m*\x1b[0m\x1b[1;37m*\x1b[0m\x1b[38;5;252m*\x1b[0m\x1b[1;37m*\x1b[0m\x1b[38;5;252m*\x1b[0m\x1b[38;5;252m*\x1b[0m\x1b[38;5;252m*\x1b[0m\x1b[1;37m*\x1b[0m\x1b[38;5;252m*\x1b[0m\x1b[38;5;252m*\x1b[0m\x1b[38;5;252m*\x1b[0m\x1b[38;5;252m*\x1b[0m\x1b[38;5;252m*\x1b[0m\x1b[38;5;252m*\x1b[0m\x1b[38;5;252m*\x1b[0m\x1b[38;5;239m.\x1b[0m      ',
-        '       \x1b[38;5;239m.\x1b[0m\x1b[38;5;239m.\x1b[0m   \x1b[38;5;239m.\x1b[0m\x1b[1;37m*\x1b[0m\x1b[1;37m*\x1b[0m\x1b[1;37m*\x1b[0m\x1b[1;37m*\x1b[0m\x1b[1;37m*\x1b[0m\x1b[1;37m*\x1b[0m\x1b[38;5;252m*\x1b[0m\x1b[38;5;239m.\x1b[0m             ',
+    # Authentic NCCA Butterfly ASCII Art from user's terminal profile (White & Silver-Gray)
+    butterfly_raw = [
+        "                    '       '                  ",
+        ";,,,                '       '              ;;;;",
+        "`YES8888bo.         :       :       .od8888YES'",
+        "  888I08D088b.      :       :    .d8888I8D088  ",
+        "  8LOVEY'  `Y8b.    '       '  .d8Y'  `YLOVE8  ",
+        " jTHEE!  .db.  Yb. ' '     ' ' .dY .db.  8THEE!",
+        "   `888  Y88Y        `b ( ) d'     Y88Y  888'  ",
+        "    8MYb  '\"            ','         '\"   dMY8  ",
+        "   j8pRECIOUSgf\"'       ':'     `\"?g8pRECIOUSk ",
+        "     'Y'    .8'        d' 'b      '8.    'Y'   ",
+        "      !   .8' db      d'; ;'b    db '8.   !    ",
+        "         d88  `'      8 ; ; 8    `'  88b       ",
+        "        d88Ib       .g8 ',' 8g.     dI88b      ",
+        "        :888LOVE88Y'           'Y88LOVE888:    ",
+        "        '! THEE888'             `888THEE !'    ",
+        "          '8Y  `Y                 Y'  Y8'      ",
+        "            Y                         Y        "
     ]
 
-    row_cat  = f" {CYAN}CATALYST  {RESET}  FOMC PRESS CONFERENCE (THE FEDERAL RESERVE)"
-    row_mod  = f" {CYAN}MODEL     {RESET}  N-GRAM TF-IDF & COSINE SIMILARITY NLP ENGINE"
-    row_ds   = f" {CYAN}DATABASE  {RESET}  {dataset_count} HISTORICAL MEETINGS (2020 - 2026)"
-    row_eng  = f" {CYAN}STATUS    {RESET}  ONLINE // AUTOMATIC SPEAKER DIARIZATION"
-    row_th   = f" {CYAN}THRESHOLD {RESET}  EXTREME TAIL VOLATILITY >= 400 PIPS ($40.0 USD)"
+    LGRAY = '\033[38;5;252m'  # Silver light gray
+    MGRAY = '\033[38;5;246m'  # Slate mid gray
+    DGRAY = '\033[38;5;239m'  # Dark gray
+
+    butterfly_colored = []
+    for line in butterfly_raw:
+        out = []
+        for ch in line:
+            if ch == ' ':
+                out.append(' ')
+            elif ch in "':;,!\"`.":
+                out.append(f"{MGRAY}{ch}{RESET}")
+            elif ch in "80ID":
+                out.append(f"{WHITE}{ch}{RESET}")
+            else:
+                out.append(f"{LGRAY}{ch}{RESET}")
+        butterfly_colored.append("".join(out))
+
+    row_cat  = f" {CYAN}CATALYST  {RESET}  FOMC PRESS CONF (THE FED)"
+    row_mod  = f" {CYAN}MODEL     {RESET}  N-GRAM TF-IDF & SIMILARITY NLP"
+    row_ds   = f" {CYAN}DATABASE  {RESET}  {dataset_count} HISTORICAL MEETINGS (2020-26)"
+    row_eng  = f" {CYAN}STATUS    {RESET}  ONLINE // AUTOMATIC DIARIZATION"
+    row_th   = f" {CYAN}THRESHOLD {RESET}  EXTREME VOLATILITY >= 400 PIPS"
     row_time = f" {CYAN}TIME      {RESET}  {now_str} WIB"
 
     right_panel = [
+        "",
         f"{BOLD}{WHITE}Hey, Trader{RESET}",
-        f"{GREEN}┌── FOMC Press Conference NLP Engine ──────────────────────┐{RESET}",
-        box_row(row_cat, 58),
-        box_row(row_mod, 58),
-        box_row(row_ds, 58),
-        f"{GREEN}├── NLP Execution Protocol ─────────────────────────────────┤{RESET}",
-        box_row(row_eng, 58),
-        box_row(row_th, 58),
-        box_row(row_time, 58),
-        f"{GREEN}└───────────────────────────────────────────────────────────┘{RESET}",
+        f"{GREEN}┌── FOMC Press Conference NLP Engine ──────────────┐{RESET}",
+        box_row(row_cat, 50),
+        box_row(row_mod, 50),
+        box_row(row_ds, 50),
+        f"{GREEN}├── NLP Execution Protocol ─────────────────────────┤{RESET}",
+        box_row(row_eng, 50),
+        box_row(row_th, 50),
+        box_row(row_time, 50),
+        f"{GREEN}└───────────────────────────────────────────────────┘{RESET}",
         f"{WHITE}Quantitative Macro NLP Forecaster Online.{RESET}",
-        f"{WHITE}●{RESET} \033[38;5;252m●{RESET} \033[38;5;246m●{RESET} \033[38;5;239m●{RESET}",
+        f"{WHITE}●{RESET} {LGRAY}●{RESET} {MGRAY}●{RESET} {DGRAY}●{RESET}",
+        "",
+        "",
+        "",
         ""
     ]
 
     print("\n")
-    for b, r in zip(butterfly_art, right_panel):
-        print(f" {b}   {r}")
+    for b, r in zip(butterfly_colored, right_panel):
+        print(f" {b}  {r}")
     print("")
 
 
