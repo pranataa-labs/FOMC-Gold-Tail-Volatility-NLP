@@ -1,4 +1,5 @@
 @echo off
+cd /d "%~dp0"
 title Uji Prediksi PDF Transkrip FOMC Terbaru
 echo =========================================================
 echo    Menganalisis Transkrip PDF FOMC Terbaru...
