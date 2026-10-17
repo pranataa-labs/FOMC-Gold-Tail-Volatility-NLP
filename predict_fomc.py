@@ -38,38 +38,137 @@ RESET = '\033[0m'
 BOLD = '\033[1m'
 
 
+# Chromatic Aberration & Glitch Color Palette (BBS Retro Cyberpunk)
+R1 = '\033[38;5;196m'  # Neon Red (Left aberration fringe)
+R2 = '\033[38;5;203m'  # Salmon / Coral Red
+Y1 = '\033[38;5;220m'  # Warm Gold / Yellow (Core highlight)
+W1 = '\033[1;37m'      # High-intensity White (Core glyph body)
+C1 = '\033[38;5;51m'   # Electric Neon Cyan (Right aberration fringe)
+B1 = '\033[38;5;39m'   # Deep Neon Blue (Far right chromatic shift)
+
+
 def strip_ansi(s):
     return re.sub(r'\033\[[0-9;]*m', '', s)
 
 
-def box_row(content, width=58):
+def box_row(content, width=80):
     vis = len(strip_ansi(content))
     pad = max(0, width - vis)
     return f"{GREEN}│{RESET}{content}{' ' * pad}{GREEN}│{RESET}"
 
 
+def color_glyph(glyph_str):
+    out = []
+    length = len(glyph_str)
+    for idx, ch in enumerate(glyph_str):
+        if ch == ' ':
+            out.append(' ')
+            continue
+        if ch == '─':
+            out.append(f"{W1}{ch}{RESET}")
+            continue
+        ratio = idx / max(1, length - 1)
+        if ratio <= 0.18:
+            out.append(f"{R1}{ch}{RESET}")
+        elif ratio <= 0.36:
+            out.append(f"{Y1}{ch}{RESET}")
+        elif ratio <= 0.65:
+            out.append(f"{W1}{ch}{RESET}")
+        elif ratio <= 0.85:
+            out.append(f"{C1}{ch}{RESET}")
+        else:
+            out.append(f"{B1}{ch}{RESET}")
+    return "".join(out)
+
+
 def print_fomc_header(dataset_count=45):
     now_str = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-    # ASCII Art Logo (XAU/USD Gold Ingot)
-    logo = [
-        r"          .______________________.          ",
-        r"         /                      /|          ",
-        r"        /      X A U / U S D   / |          ",
-        r"       /      G O L D  999.9  /  |          ",
-        r"      /______________________/   |          ",
-        r"      |                      |   |          ",
-        r"      |   .--------------.   |   |          ",
-        r"      |   |  FINE  GOLD  |   |   |          ",
-        r"      |   |   1000 g     |   |   /          ",
-        r"      |   '--------------'   |  /           ",
-        r"      |     NET LIQUIDITY    | /            ",
-        r"      |______________________|/             ",
-        r"             [ XAUUSD ]                     ",
-        r"         Institutional Desk                 ",
-        r"                                            ",
-        r"                                            "
+    # BBS Retro Chromatic Aberration Typography (XAU/USD) - Exact 82 characters width
+    cols = {
+        'X': [
+            "8888' `8888",
+            " `YY8888YY'",
+            "   ;8888:  ",
+            " .dd8''88b.",
+            "8888' `8888"
+        ],
+        'A': [
+            "`bbss..ssd'",
+            ":8888''8888",
+            "88888──8888",
+            "88888  8888",
+            "`YY88' `88Y"
+        ],
+        'U1': [
+            "8888' `888",
+            "8888   888",
+            "8888   888",
+            "`bbss..ssd",
+            " `YYssssY'"
+        ],
+        'SL': [
+            " .ss88",
+            ".ss88'",
+            "dd88' ",
+            ":8888:",
+            "88PP' "
+        ],
+        'U2': [
+            "8888' `888",
+            "8888   888",
+            "8888   888",
+            "`bbss..ssd",
+            " `YYssssY'"
+        ],
+        'S': [
+            "`bbss.8888'",
+            ":888888888 ",
+            "`*Y8888ss. ",
+            ";88888888' ",
+            ".,*Y8888888"
+        ],
+        'D': [
+            "88888`bbss.",
+            "88888 88888",
+            "88888 ,88PP",
+            "88888 `888b",
+            "88888 .,88*"
+        ]
+    }
+
+    divs = [
+        f"{R1}─{C1}─{RESET}",
+        "  ",
+        f"{W1}──{RESET}",
+        "  ",
+        f"{C1}─{R1}─{RESET}"
     ]
+
+    banner_rows = []
+    for r in range(5):
+        c_parts = [
+            color_glyph(cols['X'][r]),
+            divs[r],
+            color_glyph(cols['A'][r]),
+            divs[r],
+            color_glyph(cols['U1'][r]),
+            divs[r],
+            color_glyph(cols['SL'][r]),
+            divs[r],
+            color_glyph(cols['U2'][r]),
+            divs[r],
+            color_glyph(cols['S'][r]),
+            divs[r],
+            color_glyph(cols['D'][r]),
+        ]
+        banner_rows.append("".join(c_parts))
+
+    subtext = (
+        f"        {R1}008211{RESET}"
+        f"                   {R1}\"{Y1}\"{W1}XAU{W1}/{C1}USD{C1}\"{B1}\"{RESET}"
+        f"                   {R1}ll{W1}bs{C1}s.{B1}999{RESET}"
+    )
 
     row_cat  = f" {CYAN}CATALYST  {RESET}  FOMC PRESS CONFERENCE (THE FEDERAL RESERVE)"
     row_mod  = f" {CYAN}MODEL     {RESET}  N-GRAM TF-IDF & COSINE SIMILARITY NLP ENGINE"
@@ -78,26 +177,23 @@ def print_fomc_header(dataset_count=45):
     row_th   = f" {CYAN}THRESHOLD {RESET}  EXTREME TAIL VOLATILITY >= 400 PIPS ($40.0 USD)"
     row_time = f" {CYAN}TIME      {RESET}  {now_str} WIB"
 
-    right_panel = [
-        f"{BOLD}{WHITE}Hey, Trader{RESET}",
-        f"{GREEN}┌── FOMC Press Conference NLP Engine ──────────────────────┐{RESET}",
-        box_row(row_cat),
-        box_row(row_mod),
-        box_row(row_ds),
-        f"{GREEN}├── NLP Execution Protocol ─────────────────────────────────┤{RESET}",
-        box_row(row_eng),
-        box_row(row_th),
-        box_row(row_time),
-        f"{GREEN}└───────────────────────────────────────────────────────────┘{RESET}",
-        f"{WHITE}Quantitative Macro NLP Forecaster Online.{RESET}",
-        f"{RED}●{RESET} {GREEN}●{RESET} {YELLOW}●{RESET} {BLUE}●{RESET} {MAGENTA}●{RESET} {CYAN}●{RESET} {WHITE}●{RESET}",
-        ""
-    ]
-
     print("\n")
-    for l, r in zip(logo, right_panel):
-        print(f"{YELLOW}{l}{RESET}  {r}")
+    for r in banner_rows:
+        print(r)
     print("")
+    print(subtext)
+    print("")
+
+    print(f"{GREEN}┌── FOMC Press Conference NLP Engine ────────────────────────────────────────────┐{RESET}")
+    print(box_row(row_cat))
+    print(box_row(row_mod))
+    print(box_row(row_ds))
+    print(f"{GREEN}├── NLP Execution Protocol ──────────────────────────────────────────────────────┤{RESET}")
+    print(box_row(row_eng))
+    print(box_row(row_th))
+    print(box_row(row_time))
+    print(f"{GREEN}└────────────────────────────────────────────────────────────────────────────────┘{RESET}")
+    print(f"{WHITE}Quantitative Macro NLP Forecaster Online.{RESET}  {RED}●{RESET} {GREEN}●{RESET} {YELLOW}●{RESET} {BLUE}●{RESET} {MAGENTA}●{RESET} {CYAN}●{RESET} {WHITE}●{RESET}\n")
 
 
 def extract_chair_speech_from_pdf(pdf_path):

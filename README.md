@@ -75,7 +75,6 @@ Pengujian dilakukan secara ketat pada data *out-of-sample* (2025–2026) tanpa b
 ├── dataset/                         # 45 file transkrip historis FOMC (2020 - 2026)
 ├── transcript/                      # Berkas PDF resmi The Fed tahun 2026 (termasuk era Kevin Warsh)
 ├── fomc_gold_volatility_model.ipynb # Jupyter Notebook riset lengkap (visualisasi & uji statistik)
-├── fomc_gold_volatility_model.py    # Engine pustaka model NLP & ekstraksi transkrip
 ├── gold_prices_cache.csv            # Cache harga riil Emas COMEX (GC=F) harian
 ├── predict_fomc.py                  # Skrip otomatis pembaca PDF & estimator sinyal volatilitas
 ├── predict_fomc.bat                 # Launcher 1-klik untuk Windows
