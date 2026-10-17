@@ -1,0 +1,14 @@
+@echo off
+chcp 65001 >nul
+cd /d "%~dp0"
+title FOMC Volatility NLP Engine - XAU/USD
+python predict_fomc.py
+if %errorlevel% neq 0 (
+    echo.
+    echo [ERROR] Failed to run Python script.
+    echo Please make sure Python and dependencies are installed.
+    pause
+    exit /b
+)
+echo.
+pause >nul

@@ -75,11 +75,10 @@ Pengujian dilakukan secara ketat pada data *out-of-sample* (2025–2026) tanpa b
 ├── dataset/                         # 45 file transkrip historis FOMC (2020 - 2026)
 ├── transcript/                      # Berkas PDF resmi The Fed tahun 2026 (termasuk era Kevin Warsh)
 ├── fomc_gold_volatility_model.ipynb # Jupyter Notebook riset lengkap (visualisasi & uji statistik)
-├── fomc_gold_volatility_model.py    # Engine pustaka NLP & model volatilitas utama
+├── fomc_gold_volatility_model.py    # Engine pustaka model NLP & ekstraksi transkrip
 ├── gold_prices_cache.csv            # Cache harga riil Emas COMEX (GC=F) harian
-├── uji_transcript_pdf.py            # Skrip otomatis pembaca PDF & estimator sinyal
-├── UJI_PDF_TERBARU.bat              # Launcher 1-klik untuk Windows
-├── PANDUAN_TRADING_FOMC.txt         # Ringkasan SOP eksekusi trading
+├── predict_fomc.py                  # Skrip otomatis pembaca PDF & estimator sinyal volatilitas
+├── predict_fomc.bat                 # Launcher 1-klik untuk Windows
 ├── requirements.txt                 # Daftar dependensi Python
 ├── LICENSE                          # Lisensi open-source MIT
 └── README.md                        # Dokumentasi resmi repositori
@@ -98,8 +97,8 @@ Pengujian dilakukan secara ketat pada data *out-of-sample* (2025–2026) tanpa b
 
 1. **Clone Repositori**:
    ```bash
-   git clone https://github.com/PranataGM/fomc-gold-tail-volatility-nlp.git
-   cd fomc-gold-tail-volatility-nlp
+   git clone https://github.com/pranataa-labs/fomc-gold-tail-volatility-nlp.git
+   cd fomc
    ```
 
 2. **(Opsional tetapi Disarankan) Buat Virtual Environment**:
@@ -158,17 +157,16 @@ Dokumen PDF dapat diunduh langsung dari dua kanal resmi Federal Reserve berikut:
 
 #### Cara 1: Eksekusi 1-Klik (Windows) — *Sangat Cepat & Praktis*
 1. Pastikan file PDF terbaru sudah ada di folder `transcript/`.
-2. **Klik 2 kali (Double-Click)** file **`UJI_PDF_TERBARU.bat`**.
+2. **Klik 2 kali (Double-Click)** file **`predict_fomc.bat`**.
 3. Sistem secara otomatis:
    * Mengambil file PDF tanggal terbaru di folder `transcript/`.
    * Mendeteksi figur Ketua The Fed yang berbicara (Jerome Powell atau Kevin Warsh).
    * Mengekstrak ucapan Ketua The Fed dan menghitung probabilitas volatilitas ekstrem.
    * Menampilkan sinyal rekomendasi trading di layar dalam tempo ~2 detik.
-   * Mencatat hasil prediksi secara otomatis ke berkas `riwayat_prediksi.csv`.
 
 #### Cara 2: Menjalankan via Terminal / CLI
 ```bash
-python uji_transcript_pdf.py
+python predict_fomc.py
 ```
 
 #### Cara 3: Membuka Notebook Riset Interaktif
